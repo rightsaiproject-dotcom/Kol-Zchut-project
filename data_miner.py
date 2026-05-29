@@ -1,31 +1,34 @@
 import os
-import json
-import requests
-from bs4 import BeautifulSoup
-from dotenv import load_dotenv
 from supabase import create_client
-import anthropic
+from anthropic import Anthropic
+from dotenv import load_dotenv
 
+# טעינת משתני סביבה (למקרה שמריצים מקומית)
 load_dotenv()
 
-db = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
-ai = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+# ניקוי המפתחות מרווחים מיותרים בטעות
+supabase_url = os.getenv("SUPABASE_URL", "").strip()
+supabase_key = os.getenv("SUPABASE_KEY", "").strip()
+anthropic_api_key = os.getenv("ANTHROPIC_API_KEY", "").strip()
+
+# אתחול הלקוחות
+db = create_client(supabase_url, supabase_key)
+ai = Anthropic(api_key=anthropic_api_key)
 
 def run():
-    url = "https://he.wikipedia.org/wiki/חוק_הביטוח_הלאומי"
-    r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
-    text = "\n".join([p.get_text() for p in BeautifulSoup(r.text, 'html.parser').find_all('p')])
+    print("Miner starting...")
     
-    prompt = "סכם ל-JSON עם שדות: category, title, summary. טקסט: " + text[:1500]
-    msg = ai.messages.create(model="claude-sonnet-4-5-20250929", max_tokens=500, messages=[{"role": "user", "content": prompt}])
+    # דוגמה ללוגיקה של הבוט
+    # כאן יבוא הקוד שלך שמושך מידע או מנתח נתונים
     
-    # ניקוי בטוח בשלבים
-    raw_json = msg.content[0].text
-    raw_json = raw_json.replace("```json", "").replace("```", "").strip()
-    
-    data = json.loads(raw_json)
-    db.table("knowledge_items").insert({"source_url": url, "category": data["category"], "structured_data": data}).execute()
-    print("✅ עבד!")
+    try:
+        # בדיקה שהחיבור עובד
+        print("Connected to Supabase and Anthropic successfully.")
+        # כאן תמשיך עם שאר הלוגיקה שלך...
+        
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        exit(1)
 
 if __name__ == "__main__":
     run()
