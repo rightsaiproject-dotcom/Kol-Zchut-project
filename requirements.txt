@@ -1,0 +1,4 @@
+supabase
+firecrawl-py
+python-dotenv
+anthropic
