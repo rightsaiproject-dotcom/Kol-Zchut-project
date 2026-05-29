@@ -12,6 +12,7 @@ db = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
 ai = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 def run():
+    # הרשימה של הקטגוריות
     urls_to_scan = [
         "https://www.kolzchut.org.il/he/דמי_מחלה",
         "https://www.kolzchut.org.il/he/פיצויי_פיטורים",
